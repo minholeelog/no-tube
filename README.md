@@ -4,7 +4,6 @@
 ### ♻ 기술 스택
 
 ![front](https://img.shields.io/badge/Frontend-JavaScript-yellow?style=for-the-badge&logo=javascript)
-<!-- ![styles](https://img.shields.io/badge/Style-SCSS-hotpink?style=for-the-badge) -->
 ![back](https://img.shields.io/badge/Backend-Node-green?style=for-the-badge&logo=express)
 ![db](https://img.shields.io/badge/DB-MongoDB-darkgreen?style=for-the-badge&logo=mongodb)
 ![deploy](https://img.shields.io/badge/Deploy-Heroku-blueviolet?style=for-the-badge&logo=heroku)
