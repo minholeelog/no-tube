@@ -6,8 +6,10 @@ import videoRouter from './routers/videoRouter';
 
 const PORT = 4040;
 const app = express();
-app.use(logger('dev'));
 
+app.set('view engine', 'pug');
+app.set('views', process.cwd() + '/src/views');
+app.use(logger('dev'));
 app.use('/', globalRouter);
 app.use('/users', userRouter);
 app.use('/videos', videoRouter);
