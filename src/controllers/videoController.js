@@ -1,4 +1,3 @@
-import { compile } from 'morgan';
 import Video from '../models/Video';
 
 export const home = async (req, res) => {
@@ -38,7 +37,8 @@ export const getUpload = (req, res) => {
 export const postUpload = async (req, res) => {
   const { title, description, hashtags } = req.body;
 
-  /* 
+  /*
+  문서 생성 
   const video = new Video({
     title,
     description,
@@ -49,9 +49,12 @@ export const postUpload = async (req, res) => {
       rating: 0,
     },
   });
+
+  DB에 저장
   await video.save();
   */
 
+  // 문서를 생성하면서 DB에 저장
   await Video.create({
     title,
     description,
