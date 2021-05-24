@@ -1,3 +1,4 @@
+import './db';
 import express from 'express';
 import logger from 'morgan';
 import globalRouter from './routers/globalRouter';
