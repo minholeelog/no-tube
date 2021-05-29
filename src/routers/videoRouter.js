@@ -9,9 +9,8 @@ import {
 
 const videoRouter = express.Router();
 
-videoRouter.get('/:id(\\d+)', watch);
-// 동일한 URL에 get, post method를 사용할 경우..
-videoRouter.route('/:id(\\d+)/edit').get(getEdit).post(postEdit);
+videoRouter.get('/:id([0-9a-f]{24})', watch);
+videoRouter.route('/:id([0-9a-f]{24})/edit').get(getEdit).post(postEdit);
 videoRouter.route('/upload').get(getUpload).post(postUpload);
 
 export default videoRouter;

@@ -1,22 +1,15 @@
 import Video from '../models/Video';
 
 export const home = async (req, res) => {
-  // callback
-  /*
-  Video.find({}, (error, videos) => {
-    return res.render('home', { pageTitle: 'Home', videos: [] });
-  });
-  */
-
-  // async, await
   const videos = await Video.find({});
-  console.log(videos);
   return res.render('home', { pageTitle: 'Home', videos });
 };
 
-export const watch = (req, res) => {
+export const watch = async (req, res) => {
   const { id } = req.params;
-  return res.render('watch', { pageTitle: `Watching` });
+  const video = await Video.findById(id);
+  console.log(video);
+  return res.render('watch', { pageTitle: video.title, video });
 };
 
 export const getEdit = (req, res) => {
@@ -36,23 +29,6 @@ export const getUpload = (req, res) => {
 
 export const postUpload = async (req, res) => {
   const { title, description, hashtags } = req.body;
-
-  /*
-  문서 생성 
-  const video = new Video({
-    title,
-    description,
-    createdAt: Date.now(),
-    hashtags: hashtags.split(',').map((word) => `#${word}`),
-    meta: {
-      views: 0,
-      rating: 0,
-    },
-  });
-
-  DB에 저장
-  await video.save();
-  */
 
   // 문서를 생성하면서 DB에 저장
   try {
