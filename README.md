@@ -9,10 +9,6 @@
 ![db](https://img.shields.io/badge/DB-MongoDB-darkgreen?style=for-the-badge&logo=mongodb)
 ![deploy](https://img.shields.io/badge/Deploy-Heroku-blueviolet?style=for-the-badge&logo=heroku)
 
-### 📝 계획
-
-     6/4 완료 목표!
-
 Pages
 
 - [ ] Home
