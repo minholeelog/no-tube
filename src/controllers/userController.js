@@ -1,4 +1,5 @@
 import User from '../models/User';
+import bcrypt from 'bcrypt';
 
 export const getJoin = (req, res) => {
   res.render('join', { pageTitle: 'Join' });
@@ -21,18 +22,47 @@ export const postJoin = async (req, res) => {
       errorMessage: 'This username/email is already taken.',
     });
   }
-  await User.create({
-    name,
-    username,
-    email,
-    password,
-    location,
-  });
-  res.redirect('/login');
+  try {
+    await User.create({
+      name,
+      username,
+      email,
+      password,
+      location,
+    });
+    res.redirect('/login');
+  } catch (error) {
+    return res
+      .status(400)
+      .render('join', { pageTitle, errorMessage: error._message });
+  }
 };
 
-export const login = (req, res) => {
-  res.send('Login');
+export const getLogin = (req, res) => {
+  res.render('login', { pageTitle: 'Login' });
+};
+
+export const postLogin = async (req, res) => {
+  const pageTitle = 'Login';
+  const { username, password } = req.body;
+
+  const user = await User.findOne({ username });
+  if (!user) {
+    return res.status(400).render('login', {
+      pageTitle,
+      errorMessage: 'Username does not exist.',
+    });
+  }
+
+  const success = await bcrypt.compare(password, user.password);
+  if (!success) {
+    return res.status(400).render('login', {
+      pageTitle,
+      errorMessage: 'Wrong password',
+    });
+  }
+  console.log('LOG USER IN! COMMING SOON');
+  res.redirect('/');
 };
 
 export const logout = (req, res) => {
