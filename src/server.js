@@ -1,6 +1,7 @@
 import express from 'express';
 import logger from 'morgan';
 import session from 'express-session';
+import MongoStore from 'connect-mongo';
 import rootRouter from './routers/rootRouter';
 import userRouter from './routers/userRouter';
 import videoRouter from './routers/videoRouter';
@@ -17,14 +18,11 @@ app.use(
     secret: 'Hello!',
     resave: true,
     saveUninitialized: true,
+    store: MongoStore.create({ mongoUrl: 'mongodb://127.0.0.1:27017/no-tube' }),
   })
 );
 app.use(localsMiddleware);
 
-app.get('/add-one', (req, res) => {
-  req.session.potato += 1;
-  return res.send(`${req.session.id}\n${req.session.potato}`);
-});
 app.use('/', rootRouter);
 app.use('/users', userRouter);
 app.use('/videos', videoRouter);
