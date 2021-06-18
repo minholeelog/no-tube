@@ -1,3 +1,5 @@
+import dotenv from 'dotenv';
+dotenv.config();
 import express from 'express';
 import logger from 'morgan';
 import session from 'express-session';
@@ -15,11 +17,15 @@ app.use(logger('dev'));
 app.use(express.urlencoded({ extended: true }));
 app.use(
   session({
-    secret: 'Hello!',
+    secret: process.env.COOKIE_SECRET,
     resave: false,
     // Only save cookie when session information were updated.
     saveUninitialized: false,
-    store: MongoStore.create({ mongoUrl: 'mongodb://127.0.0.1:27017/no-tube' }),
+    // Set cookie expiration time
+    cookie: {
+      maxAge: 604800000,
+    },
+    store: MongoStore.create({ mongoUrl: process.env.DB_URL }),
   })
 );
 app.use(localsMiddleware);
