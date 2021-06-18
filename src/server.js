@@ -16,8 +16,9 @@ app.use(express.urlencoded({ extended: true }));
 app.use(
   session({
     secret: 'Hello!',
-    resave: true,
-    saveUninitialized: true,
+    resave: false,
+    // Only save cookie when session information were updated.
+    saveUninitialized: false,
     store: MongoStore.create({ mongoUrl: 'mongodb://127.0.0.1:27017/no-tube' }),
   })
 );
