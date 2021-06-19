@@ -1,6 +1,8 @@
 import User from '../models/User';
 import fetch from 'node-fetch';
 import bcrypt from 'bcrypt';
+import qs from 'qs';
+import axios from 'axios';
 
 export const getJoin = (req, res) => {
   res.render('join', { pageTitle: 'Join' });
@@ -137,6 +139,79 @@ export const finishGithubLogin = async (req, res) => {
         location: userData.location,
       });
     }
+    req.session.loggedIn = true;
+    req.session.user = user;
+    return res.redirect('/');
+  } else {
+    return res.redirect('/login');
+  }
+};
+
+export const startKakaoLogin = (req, res) => {
+  const baseUrl = 'https://kauth.kakao.com/oauth/authorize';
+  const config = {
+    client_id: process.env.KAKAO_CLIENT,
+    redirect_uri: 'http://localhost:4040/users/kakao/finish',
+    response_type: 'code',
+    scope: 'profile,account_email',
+  };
+  const params = new URLSearchParams(config).toString();
+  const targetUrl = `${baseUrl}?${params}`;
+  return res.redirect(targetUrl);
+};
+
+export const finishKakaoLogin = async (req, res) => {
+  const baseUrl = 'https://kauth.kakao.com/oauth/token';
+  const config = {
+    client_id: process.env.KAKAO_CLIENT,
+    client_secret: process.env.KAKAO_SECRET,
+    redirect_uri: 'http://localhost:4040/users/kakao/finish',
+  };
+  let token;
+  try {
+    token = await axios({
+      method: 'POST',
+      url: baseUrl,
+      headers: {
+        'content-type': 'application/x-www-form-urlencoded',
+      },
+      data: qs.stringify({
+        grant_type: 'authorization_code',
+        client_id: config.client_id,
+        client_secret: config.client_secret,
+        redirectUri: config.redirect_uri,
+        code: req.query.code,
+      }),
+    });
+  } catch (err) {
+    return res.json(err.data);
+  }
+  let userData;
+  try {
+    userData = await axios({
+      method: 'GET',
+      url: 'https://kapi.kakao.com/v2/user/me',
+      headers: {
+        Authorization: `Bearer ${token.data.access_token}`,
+      },
+    });
+  } catch (err) {
+    return res.json(err.data);
+  }
+  const {
+    data: { kakao_account, id },
+  } = userData;
+  let user = await User.findOne({ email: userData.data.kakao_account.email });
+  if (!user) {
+    user = await User.create({
+      name: kakao_account.profile.nickname,
+      avatarUrl: kakao_account.profile.profile_image_url,
+      username: id,
+      email: kakao_account.email,
+      password: '',
+      socialOnly: true,
+      location: '',
+    });
     req.session.loggedIn = true;
     req.session.user = user;
     return res.redirect('/');
