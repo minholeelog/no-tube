@@ -84,6 +84,7 @@ export const startGithubLogin = (req, res) => {
 };
 
 export const finishGithubLogin = async (req, res) => {
+  // Todo: axios 사용으로 대체
   const baseUrl = 'https://github.com/login/oauth/access_token';
   const config = {
     client_id: process.env.GH_CLIENT,
@@ -229,6 +230,47 @@ export const see = (req, res) => {
   res.send('See User');
 };
 
-export const edit = (req, res) => {
-  res.send('Edit User');
+export const getEdit = (req, res) => {
+  return res.render('edit-profile', { pageTitle: 'Edit Profile' });
+};
+
+export const postEdit = async (req, res) => {
+  const pageTitle = 'Edit Profile';
+  const {
+    session: {
+      user: { _id },
+    },
+    body: { name, email: newEmail, username: newUsername, location },
+  } = req;
+  const existedEmail = await User.findOne({ email: newEmail });
+  const existedUsername = await User.findOne({ username: newUsername });
+  if (existedEmail && existedEmail._id.toString() !== _id) {
+    return res.status(400).render('edit-profile', {
+      pageTitle,
+      errorMessage: 'This email is taken by someone.',
+    });
+  }
+  if (existedUsername && existedUsername._id.toString() !== _id) {
+    return res.status(400).render('edit-profile', {
+      pageTitle,
+      errorMessage: 'This username is taken by someone.',
+    });
+  }
+
+  try {
+    const updatedUser = await User.findByIdAndUpdate(
+      _id,
+      {
+        name,
+        email: newEmail,
+        username: newUsername,
+        location,
+      },
+      { new: true }
+    );
+    req.session.user = updatedUser;
+    return res.redirect('/users/edit');
+  } catch (err) {
+    console.log(err);
+  }
 };
