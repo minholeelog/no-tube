@@ -238,10 +238,12 @@ export const postEdit = async (req, res) => {
   const pageTitle = 'Edit Profile';
   const {
     session: {
-      user: { _id },
+      user: { _id, avatarUrl },
     },
     body: { name, email: newEmail, username: newUsername, location },
+    file,
   } = req;
+
   const existedEmail = await User.findOne({ email: newEmail });
   const existedUsername = await User.findOne({ username: newUsername });
   if (existedEmail && existedEmail._id.toString() !== _id) {
@@ -261,6 +263,7 @@ export const postEdit = async (req, res) => {
     const updatedUser = await User.findByIdAndUpdate(
       _id,
       {
+        avatarUrl: file ? file.path : avatarUrl,
         name,
         email: newEmail,
         username: newUsername,
