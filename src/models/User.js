@@ -13,7 +13,10 @@ const userSchema = new mongoose.Schema({
 });
 
 userSchema.pre('save', async function () {
-  this.password = await bcrypt.hash(this.password, 5);
+  // 비밀번호가 변경되었을 경우에만 콜백 함수 실행
+  if (this.isModified('password')) {
+    this.password = await bcrypt.hash(this.password, 5);
+  }
 });
 
 const User = mongoose.model('User', userSchema);
