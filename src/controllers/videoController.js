@@ -43,6 +43,7 @@ export const getUpload = (req, res) => {
 };
 
 export const postUpload = async (req, res) => {
+  const { path: fileUrl } = req.file;
   const { title, description, hashtags } = req.body;
 
   // 문서를 생성하면서 DB에 저장
@@ -50,6 +51,7 @@ export const postUpload = async (req, res) => {
     await Video.create({
       title,
       description,
+      fileUrl,
       hashtags: Video.formatHashtags(hashtags),
     });
     return res.redirect('/');
