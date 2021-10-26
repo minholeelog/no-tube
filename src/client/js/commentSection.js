@@ -18,6 +18,8 @@ const addComment = (text, id) => {
   videoComments.prepend(newComment);
 };
 
+// TODO: Delete comment
+
 const handleSubmit = async (e) => {
   e.preventDefault();
   const textarea = form.querySelector('textarea');
