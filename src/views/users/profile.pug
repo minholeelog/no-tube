@@ -5,6 +5,10 @@ block content
     div.profile__data
         if user.avatarUrl === ""
             img(src="/statics/img/default.png", alt="").avatar
+        else if user.avatarUrl.includes('github')
+            img(src=user.avatarUrl, alt="").avatar
+        else if user.avatarUrl.includes('kakao')
+            img(src=user.avatarUrl, alt="").avatar
         else
             img(src="/" + user.avatarUrl, alt="").avatar
         h3=user.name
