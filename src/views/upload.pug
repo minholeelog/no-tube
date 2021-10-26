@@ -4,18 +4,18 @@ block content
     div.upload__container
         div.upload__video
             video#preview
-            button#actionBtn Start Recording
+            button#actionBtn.action__btn 녹화 시작
     if errorMessage 
         span=errorMessage
     form(method="POST" enctype="multipart/form-data")
-        label(for="video") Video File 
+        label(for="video") 동영상
         input(type="file", accept="video/*", required, id="video", name="video") 
-        label(for="thumb") Thumbnail File
+        label(for="thumb") 썸네일
         input(type="file", accept="image/*", required, id="thumb", name="thumb") 
-        input(name="title" type="text", placeholder="Title", required, maxlength=80)
-        input(name="description" type="text", placeholder="Description", required, minlength=20)
-        input(name="hashtags" type="text", placeholder="Hashtags, separated by comma.", required)
+        input(name="title" type="text", placeholder="제목", required, maxlength=80)
+        input(name="description" type="text", placeholder="설명", required, minlength=20)
+        input(name="hashtags" type="text", placeholder="해시 태그(콤마로 나누기)", required)
         
-        input(type="submit", value="Upload Video")
+        input(type="submit", value="올리기")
 block scripts 
     script(src="/static/js/recorder.js") 

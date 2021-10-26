@@ -23,8 +23,8 @@ videoRouter
   .get(deleteVideo);
 videoRouter
   .route('/upload')
-  .all(protectorMiddleware, sharedBuffer)
-  .get(getUpload)
+  .all(protectorMiddleware)
+  .get(sharedBuffer, getUpload)
   .post(videoUpload.fields([{ name: 'video' }, { name: 'thumb' }]), postUpload);
 
 export default videoRouter;

@@ -21,7 +21,7 @@ const downloadFile = (fileUrl, fileName) => {
 };
 
 const handleStart = () => {
-  actionBtn.innerText = 'stop';
+  actionBtn.innerText = '녹화 종료';
   actionBtn.removeEventListener('click', handleStart);
   actionBtn.addEventListener('click', handleStop);
 
@@ -37,11 +37,11 @@ const handleStart = () => {
 };
 
 const handleDownload = async () => {
-  actionBtn.innerText = 'Transcoding...';
+  actionBtn.innerText = '동영상 형식 변환 중...';
   actionBtn.removeEventListener('click', handleDownload);
   actionBtn.disabled = true;
 
-  const ffmpeg = createFFmpeg({ log: true });
+  const ffmpeg = createFFmpeg({ log: false });
   await ffmpeg.load();
 
   // Transcode video file
@@ -78,12 +78,12 @@ const handleDownload = async () => {
   URL.revokeObjectURL(videoFile);
 
   actionBtn.disabled = false;
-  actionBtn.innerText = 'Record Again';
+  actionBtn.innerText = '녹화 시작';
   actionBtn.addEventListener('click', handleStart);
 };
 
 const handleStop = () => {
-  actionBtn.innerText = 'Download Recording';
+  actionBtn.innerText = '동영상 내려받기';
   actionBtn.removeEventListener('click', handleStop);
   actionBtn.addEventListener('click', handleDownload);
   recorder.stop();
