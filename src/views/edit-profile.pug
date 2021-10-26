@@ -1,16 +1,13 @@
 extends base
 
 block content
-    if errorMessage 
-    span=errorMessage
     form(method="POST", enctype="multipart/form-data").edit-profile__form
-        label(for="avatar") Avatar 
+        label(for="avatar") 프로필 
         input(type="file", id="avatar", name="avatar" accept="image/*")
-        input(type="text", name="name", value=loggedInUser.name, placeholder="Name" required) 
-        input(type="text", name="email", value=loggedInUser.email, placeholder="Email" required) 
-        input(type="text", name="username", value=loggedInUser.username, placeholder="Username" required)
-        input(type="text", name="location", value=loggedInUser.location,placeholder="Location")
-        input(type="submit" value="Update")
+        input(type="text", name="name", value=loggedInUser.name, placeholder="이름" required) 
+        input(type="text", name="email", value=loggedInUser.email, placeholder="이메일" required) 
+        input(type="text", name="location", value=loggedInUser.location,placeholder="주소")
+        input(type="submit" value="정보 변경")
         if !loggedInUser.socialOnly
             div.edit-profile__password
-                a(href="change-password") Change Password &rarr; 
+                a(href="change-password") 비밀번호 변경 &rarr; 

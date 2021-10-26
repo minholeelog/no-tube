@@ -1,5 +1,4 @@
 import User from '../models/User';
-import Video from '../models/Video';
 import fetch from 'node-fetch';
 import bcrypt from 'bcrypt';
 import qs from 'qs';
@@ -11,7 +10,7 @@ export const getJoin = (req, res) => {
 
 export const postJoin = async (req, res) => {
   const pageTitle = 'Join';
-  const { name, username, email, password, password2, location } = req.body;
+  const { name, userId, email, password, password2, location } = req.body;
   if (password !== password2) {
     return res.status(400).render('join', {
       pageTitle,
@@ -19,9 +18,9 @@ export const postJoin = async (req, res) => {
     });
   }
 
-  const exists = await User.exists({ $or: [{ username }, { email }] });
+  const exists = await User.exists({ $or: [{ userId }, { email }] });
   if (exists) {
-    res.status(400).render('join', {
+    return res.status(400).render('join', {
       pageTitle,
       errorMessage: 'This username/email is already taken.',
     });
@@ -29,13 +28,16 @@ export const postJoin = async (req, res) => {
   try {
     await User.create({
       name,
-      username,
+      userId,
       email,
       password,
       location,
+      avatarUrl: '',
     });
-    res.redirect('/login');
+    req.flash('success', '정상적으로 회원 가입을 완료했습니다.');
+    return res.redirect('/login');
   } catch (error) {
+    console.log(error);
     return res
       .status(400)
       .render('join', { pageTitle, errorMessage: error._message });
@@ -48,18 +50,19 @@ export const getLogin = (req, res) => {
 
 export const postLogin = async (req, res) => {
   const pageTitle = 'Login';
-  const { username, password } = req.body;
+  const { userId, password } = req.body;
 
-  const user = await User.findOne({ username, socialOnly: false });
+  const user = await User.findOne({ userId, socialOnly: false });
   if (!user) {
+    req.flash('error', '존재하지 않는 아이디입니다.');
     return res.status(400).render('login', {
       pageTitle,
-      errorMessage: 'Username does not exist.',
     });
   }
 
   const confirmUser = await bcrypt.compare(password, user.password);
   if (!confirmUser) {
+    req.flash('error', '비빌번호가 일치하지 않습니다.');
     return res.status(400).render('login', {
       pageTitle,
       errorMessage: 'Wrong password',
@@ -134,7 +137,7 @@ export const finishGithubLogin = async (req, res) => {
       user = await User.create({
         name: userData.name,
         avatarUrl: userData.avatar_url,
-        username: userData.login,
+        userId: userData.login,
         email: emailObj.email,
         password: '',
         socialOnly: true,
@@ -208,7 +211,7 @@ export const finishKakaoLogin = async (req, res) => {
     user = await User.create({
       name: kakao_account.profile.nickname,
       avatarUrl: kakao_account.profile.profile_image_url,
-      username: id,
+      userId: id,
       email: kakao_account.email,
       password: '',
       socialOnly: true,
@@ -257,22 +260,15 @@ export const postEdit = async (req, res) => {
     session: {
       user: { _id, avatarUrl },
     },
-    body: { name, email: newEmail, username: newUsername, location },
+    body: { name, email: newEmail, location },
     file,
   } = req;
 
   const existedEmail = await User.findOne({ email: newEmail });
-  const existedUsername = await User.findOne({ username: newUsername });
   if (existedEmail && existedEmail._id.toString() !== _id) {
+    req.flash('error', '이미 사용중인 이메일 주소입니다.');
     return res.status(400).render('edit-profile', {
       pageTitle,
-      errorMessage: 'This email is taken by someone.',
-    });
-  }
-  if (existedUsername && existedUsername._id.toString() !== _id) {
-    return res.status(400).render('edit-profile', {
-      pageTitle,
-      errorMessage: 'This username is taken by someone.',
     });
   }
 
@@ -283,14 +279,18 @@ export const postEdit = async (req, res) => {
         avatarUrl: file ? file.path : avatarUrl,
         name,
         email: newEmail,
-        username: newUsername,
         location,
       },
       { new: true }
     );
     req.session.user = updatedUser;
+    req.flash('success', '유저 정보를 변경했습니다.');
     return res.redirect('/users/edit');
   } catch (err) {
+    req.flash(
+      'error',
+      '알 수 없는 에러가 발생했습니다. 관리자에게 문의해주세요.'
+    );
     console.log(err);
   }
 };
@@ -302,6 +302,7 @@ export const getChangePassword = (req, res) => {
     },
   } = req;
   if (socialOnly === true) {
+    req.flash('error', '소셜 로그인 유저는 비밀번호를 변경할 수 없습니다.');
     return res.redirect('/');
   }
   return res.render('users/change-password', { pageTitle: 'Change Password' });
@@ -319,21 +320,20 @@ export const postChangePassword = async (req, res) => {
 
   const confirmPassword = await bcrypt.compare(currentPassword, user.password);
   if (!confirmPassword) {
-    const errorMessage = 'The current password is incorrect';
+    req.flash('error', '현재 비밀번호가 일치하지 않습니다.');
     return res.status(400).render('users/change-password', {
       pageTitle: 'Change Password',
-      errorMessage,
     });
   }
 
   if (newPassword !== newPasswordConfirm) {
-    const errorMessage = 'The password does not match';
+    req.flash('error', '비밀번호가 일치하지 않습니다.');
     return res.status(400).render('users/change-password', {
       pageTitle: 'Change Password',
-      errorMessage,
     });
   }
   user.password = newPassword;
   await user.save();
+  req.flash('info', '비밀번호가 변경되었습니다.');
   return res.redirect('/users/logout');
 };

@@ -19,7 +19,7 @@ header
                 li 
                     a(href=`/users/${loggedInUser._id}`)
                         if loggedInUser.avatarUrl === ""
-                            span 😊
+                            img.header__avatar(src="/statics/img/default.png")
                         else 
                             img.header__avatar(src="/" + loggedInUser.avatarUrl)
             else    

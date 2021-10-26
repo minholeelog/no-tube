@@ -2,6 +2,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 import express from 'express';
 import logger from 'morgan';
+import flash from 'express-flash';
 import session from 'express-session';
 import MongoStore from 'connect-mongo';
 import apiRouter from './routers/apiRouter';
@@ -29,8 +30,10 @@ app.use(
     store: MongoStore.create({ mongoUrl: process.env.DB_URL }),
   })
 );
+app.use(flash());
 app.use(localsMiddleware);
 app.use('/static', express.static('assets'));
+app.use('/statics', express.static('statics'));
 app.use('/uploads', express.static('uploads'));
 app.use('/', rootRouter);
 app.use('/users', userRouter);
