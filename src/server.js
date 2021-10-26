@@ -4,6 +4,7 @@ import express from 'express';
 import logger from 'morgan';
 import session from 'express-session';
 import MongoStore from 'connect-mongo';
+import apiRouter from './routers/apiRouter';
 import rootRouter from './routers/rootRouter';
 import userRouter from './routers/userRouter';
 import videoRouter from './routers/videoRouter';
@@ -29,10 +30,16 @@ app.use(
   })
 );
 app.use(localsMiddleware);
+app.use((req, res, next) => {
+  res.header('Cross-Origin-Embedder-Policy', 'require-corp');
+  res.header('Cross-Origin-Opener-Policy', 'same-origin');
+  next();
+});
 app.use('/static', express.static('assets'));
 app.use('/uploads', express.static('uploads'));
 app.use('/', rootRouter);
 app.use('/users', userRouter);
 app.use('/videos', videoRouter);
+app.use('/api', apiRouter);
 
 export default app;

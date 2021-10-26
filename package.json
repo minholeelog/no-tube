@@ -18,6 +18,8 @@
   },
   "homepage": "https://github.com/minholeelog/no-tube#readme",
   "dependencies": {
+    "@ffmpeg/core": "^0.8.5",
+    "@ffmpeg/ffmpeg": "^0.9.7",
     "axios": "^0.21.1",
     "bcrypt": "^5.0.1",
     "connect-mongo": "^4.4.1",
@@ -29,7 +31,8 @@
     "multer": "^1.4.3",
     "node-fetch": "^2.6.1",
     "pug": "^3.0.2",
-    "qs": "^6.7.0"
+    "qs": "^6.7.0",
+    "regenerator-runtime": "^0.13.9"
   },
   "devDependencies": {
     "@babel/core": "^7.14.3",

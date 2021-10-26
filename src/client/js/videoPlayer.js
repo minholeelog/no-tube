@@ -116,6 +116,13 @@ const handleKeyPress = (e) => {
   }
 };
 
+const handleEnded = () => {
+  const { id } = videoContainer.dataset;
+  fetch(`/api/videos/${id}/view`, {
+    method: 'post',
+  });
+};
+
 const handleLoadedData = () => {
   totalTime.innerText = formatTime(Math.floor(video.duration));
   timeline.max = Math.floor(video.duration);
@@ -125,6 +132,7 @@ playBtn.addEventListener('click', handlePlayClick);
 mute.addEventListener('click', handleMuteClick);
 volumeRange.addEventListener('input', handleVolumeChange);
 video.addEventListener('loadeddata', handleLoadedData);
+video.addEventListener('ended', handleEnded);
 video.addEventListener('timeupdate', handleTimeUpdate);
 video.addEventListener('click', handleVideoClick);
 videoContainer.addEventListener('mousemove', handleMouseMove);
