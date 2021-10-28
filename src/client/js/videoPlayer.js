@@ -131,7 +131,6 @@ const handleLoadedData = () => {
 playBtn.addEventListener('click', handlePlayClick);
 mute.addEventListener('click', handleMuteClick);
 volumeRange.addEventListener('input', handleVolumeChange);
-video.addEventListener('loadeddata', handleLoadedData);
 video.addEventListener('ended', handleEnded);
 video.addEventListener('timeupdate', handleTimeUpdate);
 video.addEventListener('click', handleVideoClick);
@@ -140,3 +139,7 @@ videoContainer.addEventListener('mouseleave', handleMouseLeave);
 timeline.addEventListener('input', handleTimelineChange);
 fullScreenBtn.addEventListener('click', handleFullScreen);
 window.addEventListener('keydown', handleKeyPress);
+video.addEventListener('loadeddata', handleLoadedData);
+if (video.readyState >= 2) {
+  handleLoadedData();
+}

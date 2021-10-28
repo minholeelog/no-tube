@@ -1,6 +1,5 @@
 import dotenv from 'dotenv';
 dotenv.config();
-import cors from 'cors';
 import express from 'express';
 import logger from 'morgan';
 import flash from 'express-flash';
@@ -14,12 +13,6 @@ import { localsMiddleware } from './middlewares';
 
 const app = express();
 
-app.use(
-  cors({
-    origin: '*',
-    credentials: true,
-  })
-);
 app.set('view engine', 'pug');
 app.set('views', process.cwd() + '/src/views');
 app.use(logger('dev'));
@@ -38,7 +31,6 @@ app.use(
     store: MongoStore.create({ mongoUrl: process.env.DB_URL }),
   })
 );
-
 app.use(flash());
 app.use(localsMiddleware);
 app.use('/static', express.static('assets'));
